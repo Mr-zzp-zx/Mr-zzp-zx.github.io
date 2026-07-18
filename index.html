@@ -5,29 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>知诊 - AI医学诊断助手</title>
 <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/dist/highlight.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-  --primary: #2563EB;
-  --primary-light: #3B82F6;
-  --primary-bg: #EFF6FF;
-  --mint: #10B981;
-  --mint-light: #D1FAE5;
-  --bg: #F8FAFC;
-  --bg-white: #FFFFFF;
-  --text: #1E293B;
-  --text-secondary: #64748B;
-  --text-muted: #94A3B8;
-  --border: #E2E8F0;
-  --border-light: #F1F5F9;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-  --radius: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --sidebar-width: 280px;
+  --primary: #2563EB; --primary-light: #3B82F6; --primary-bg: #EFF6FF;
+  --mint: #10B981; --mint-light: #D1FAE5; --bg: #F8FAFC; --bg-white: #FFFFFF;
+  --text: #1E293B; --text-secondary: #64748B; --text-muted: #94A3B8;
+  --border: #E2E8F0; --border-light: #F1F5F9; --radius: 12px; --radius-lg: 16px;
+  --radius-xl: 20px; --sidebar-width: 280px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
@@ -37,7 +22,6 @@ body { display: flex; overflow: hidden; }
 .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-light); }
 .sidebar-logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .sidebar-logo svg { width: 22px; height: 22px; }
-.sidebar-brand { display: flex; flex-direction: column; }
 .sidebar-brand h1 { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: 1px; }
 .sidebar-brand span { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 .sidebar-new-btn { margin: 16px; padding: 12px; border-radius: var(--radius); border: 1px dashed var(--border); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; color: var(--text-secondary); transition: var(--transition); }
@@ -69,12 +53,6 @@ body { display: flex; overflow: hidden; }
 .toggle-btn:hover { background: var(--bg); border-color: var(--primary); }
 .toggle-btn svg { width: 18px; height: 18px; color: var(--text-secondary); }
 .topbar-title { font-size: 15px; font-weight: 600; color: var(--text); }
-.topbar-right { display: flex; align-items: center; gap: 8px; }
-.speed-toggle { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-white); cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: var(--transition); user-select: none; }
-.speed-toggle:hover { border-color: var(--mint); }
-.speed-toggle.active { background: var(--mint-light); border-color: var(--mint); color: #065F46; }
-.speed-toggle-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); transition: var(--transition); }
-.speed-toggle.active .speed-toggle-dot { background: var(--mint); }
 .chat-area { flex: 1; overflow-y: auto; padding: 0; }
 .chat-area::-webkit-scrollbar { width: 6px; }
 .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
@@ -100,12 +78,10 @@ body { display: flex; overflow: hidden; }
 .msg-avatar.user { background: linear-gradient(135deg, #6366F1, #8B5CF6); }
 .msg-avatar.user span { color: #fff; font-size: 13px; font-weight: 600; }
 .msg-content { max-width: 75%; min-width: 60px; }
-.msg-bubble { padding: 12px 16px; border-radius: var(--radius-lg); font-size: 14px; line-height: 1.7; word-break: break-word; position: relative; }
+.msg-bubble { padding: 12px 16px; border-radius: var(--radius-lg); font-size: 14px; line-height: 1.7; word-break: break-word; }
 .message-row:not(.user) .msg-bubble { background: var(--bg-white); border: 1px solid var(--border-light); border-top-left-radius: 4px; color: var(--text); }
 .message-row.user .msg-bubble { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border-top-right-radius: 4px; }
 .msg-bubble img { max-width: 280px; border-radius: 10px; margin-top: 8px; display: block; cursor: pointer; }
-.msg-bubble p { margin-bottom: 8px; }
-.msg-bubble p:last-child { margin-bottom: 0; }
 .msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin-bottom: 8px; }
 .msg-bubble code { background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-size: 13px; font-family: "SF Mono", Monaco, Consolas, monospace; }
 .msg-bubble pre { background: #F1F5F9; border-radius: 8px; padding: 12px; overflow-x: auto; margin: 8px 0; }
@@ -124,7 +100,7 @@ body { display: flex; overflow: hidden; }
 .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes typing { 0%,60%,100%{ opacity: 0.3; transform: scale(0.8); } 30%{ opacity: 1; transform: scale(1); } }
 .input-area { padding: 0 20px 20px; background: transparent; position: relative; }
-.input-wrapper { max-width: 800px; margin: 0 auto; background: var(--bg-white); border: 1.5px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow); transition: var(--transition); }
+.input-wrapper { max-width: 800px; margin: 0 auto; background: var(--bg-white); border: 1.5px solid var(--border); border-radius: var(--radius-xl); box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: var(--transition); }
 .input-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
 .image-preview-bar { display: flex; gap: 8px; padding: 12px 16px 0; flex-wrap: wrap; }
 .image-preview-bar:empty { display: none; padding: 0; }
@@ -155,7 +131,7 @@ body { display: flex; overflow: hidden; }
 .upload-overlay.show { display: flex; }
 .upload-spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
 .upload-overlay span { font-size: 13px; color: var(--text-secondary); }
-@media (max-width: 768px) { .sidebar { position: fixed; left: 0; top: 0; height: 100vh; z-index: 200; box-shadow: var(--shadow-md); } .sidebar.collapsed { width: 0; } .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 150; display: none; } .mobile-overlay.show { display: block; } .msg-content { max-width: 85%; } .welcome h2 { font-size: 22px; } .welcome p { font-size: 14px; } .input-wrapper { margin: 0 4px; } }
+@media (max-width: 768px) { .sidebar { position: fixed; left: 0; top: 0; height: 100vh; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.1); } .sidebar.collapsed { width: 0; } .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 150; display: none; } .mobile-overlay.show { display: block; } .msg-content { max-width: 85%; } .welcome h2 { font-size: 22px; } .welcome p { font-size: 14px; } .input-wrapper { margin: 0 4px; } }
 ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; } ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 .stop-btn { display: none; margin: 0 auto 8px; padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-white); cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: var(--transition); align-items: center; gap: 6px; }
 .stop-btn.show { display: flex; }
@@ -167,139 +143,85 @@ body { display: flex; overflow: hidden; }
 <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg>
-    </div>
-    <div class="sidebar-brand">
-      <h1>知诊</h1>
-      <span>AI 医学诊断助手</span>
-    </div>
+    <div class="sidebar-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg></div>
+    <div class="sidebar-brand"><h1>知诊</h1><span>AI 医学诊断助手</span></div>
   </div>
-  <button class="sidebar-new-btn" onclick="newConversation()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    新建对话
-  </button>
+  <button class="sidebar-new-btn" onclick="newConversation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建对话</button>
   <div class="history-list" id="historyList"></div>
-  <div class="sidebar-footer">
-    <div class="sidebar-footer-info">知诊 v1.0<br>仅供健康咨询，不构成诊断建议</div>
-  </div>
+  <div class="sidebar-footer"><div class="sidebar-footer-info">知诊 v1.0<br>仅供健康咨询，不构成诊断建议</div></div>
 </aside>
 <div class="main" id="main">
   <div class="topbar">
     <div class="topbar-left">
-      <button class="toggle-btn" onclick="toggleSidebar()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
-      </button>
+      <button class="toggle-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg></button>
       <span class="topbar-title" id="topbarTitle">新对话</span>
-    </div>
-    <div class="topbar-right">
-      <div class="speed-toggle" id="speedToggle" onclick="toggleSpeed()">
-        <span class="speed-toggle-dot"></span>
-        <span>极速模式</span>
-      </div>
     </div>
   </div>
   <div class="chat-area" id="chatArea">
     <div class="welcome" id="welcomePage">
-      <div class="welcome-avatar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg>
-      </div>
+      <div class="welcome-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg></div>
       <h2>我是<span>知诊</span>，你的AI医生朋友</h2>
       <p>医学问题 · 解读报告 · 用药咨询，都来问我吧～</p>
       <div class="welcome-tags">
-        <div class="welcome-tag" onclick="useTag('我最近身体有些不适，想咨询一下可能的原因')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5"/></svg>
-          健康问答
-        </div>
-        <div class="welcome-tag" onclick="useTag('帮我解读一下这份体检报告')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          报告解读
-        </div>
-        <div class="welcome-tag" onclick="useTag('我想咨询一下用药相关的问题')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.5 1.5H8A6.5 6.5 0 001.5 8v8A6.5 6.5 0 008 22h8a6.5 6.5 0 006.5-6.5v-2.5"/><path d="M16 1l7 7-9 9H7v-7z"/></svg>
-          用药咨询
-        </div>
-        <div class="welcome-tag" onclick="useTag('请帮我分析一下这张医学影像')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          影像分析
-        </div>
+        <div class="welcome-tag" onclick="useTag('我最近身体有些不适，想咨询一下可能的原因')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5"/></svg>健康问答</div>
+        <div class="welcome-tag" onclick="useTag('帮我解读一下这份体检报告')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>报告解读</div>
+        <div class="welcome-tag" onclick="useTag('我想咨询一下用药相关的问题')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.5 1.5H8A6.5 6.5 0 001.5 8v8A6.5 6.5 0 008 22h8a6.5 6.5 0 006.5-6.5v-2.5"/><path d="M16 1l7 7-9 9H7v-7z"/></svg>用药咨询</div>
+        <div class="welcome-tag" onclick="useTag('请帮我分析一下这张医学影像')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>影像分析</div>
       </div>
-      <div class="welcome-hint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        聚焦临床决策，专业文献循证
-      </div>
+      <div class="welcome-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>聚焦临床决策，专业文献循证</div>
     </div>
     <div class="messages-container" id="messagesContainer" style="display:none;"></div>
   </div>
-  <button class="stop-btn" id="stopBtn" onclick="stopGeneration()">
-    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-    停止生成
-  </button>
+  <button class="stop-btn" id="stopBtn" onclick="stopGeneration()"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>停止生成</button>
   <div class="input-area">
     <div class="input-wrapper" id="inputWrapper">
       <div class="image-preview-bar" id="imagePreviewBar"></div>
       <div class="input-row">
         <textarea id="userInput" rows="1" placeholder="聚焦临床决策，专业文献循证" onkeydown="handleKeyDown(event)" oninput="autoResize(this); updateSendBtn();"></textarea>
         <div class="input-actions">
-          <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="上传图片">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          </button>
+          <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="上传图片"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></button>
           <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFileSelect(event)">
-          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
         </div>
       </div>
-      <div class="upload-overlay" id="uploadOverlay">
-        <div class="upload-spinner"></div>
-        <span>正在上传图片...</span>
-      </div>
+      <div class="upload-overlay" id="uploadOverlay"><div class="upload-spinner"></div><span>正在上传图片...</span></div>
     </div>
     <div class="input-hint">知诊提供的建议仅供参考，不能替代专业医生的诊断和治疗</div>
   </div>
 </div>
-<div class="img-modal" id="imgModal" onclick="this.classList.remove('show')">
-  <img id="imgModalImg" src="" alt="">
-</div>
+<div class="img-modal" id="imgModal" onclick="this.classList.remove('show')"><img id="imgModalImg" src="" alt=""></div>
 <script>
 const API_BASE = 'https://e89471.r22.cpolar.top';
 const API_KEY = 'app-7xLElyQF08bVR5oq2EzGARKZ';
 const USER_ID = localStorage.getItem('zhizhen_user_id') || (() => { const id = 'user-' + crypto.randomUUID(); localStorage.setItem('zhizhen_user_id', id); return id; })();
 let conversations = JSON.parse(localStorage.getItem('zhizhen_conversations') || '{}');
-let currentConvId = null;
-let isStreaming = false;
-let abortController = null;
-let speedMode = false;
+let currentConvId = null, isStreaming = false, abortController = null;
 let pendingImages = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  marked.setOptions({ breaks: true, gfm: true });
+  if (typeof marked !== 'undefined') marked.setOptions({ breaks: true, gfm: true });
   renderHistory();
   const lastId = localStorage.getItem('zhizhen_last_conv');
-  if (lastId && conversations[lastId]) { switchConversation(lastId); }
+  if (lastId && conversations[lastId]) switchConversation(lastId);
 });
 
 function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  const ov = document.getElementById('mobileOverlay');
+  const sb = document.getElementById('sidebar'), ov = document.getElementById('mobileOverlay');
   sb.classList.toggle('collapsed');
-  if (window.innerWidth <= 768) { ov.classList.toggle('show', !sb.classList.contains('collapsed')); }
+  if (window.innerWidth <= 768) ov.classList.toggle('show', !sb.classList.contains('collapsed'));
 }
 
 function renderHistory() {
   const list = document.getElementById('historyList');
   const sorted = Object.entries(conversations).sort((a, b) => b[1].updatedAt - a[1].updatedAt);
   if (sorted.length === 0) { list.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--text-muted);font-size:13px;">暂无历史对话</div>'; return; }
-  list.innerHTML = sorted.map(([id, c]) => `
-    <div class="history-item ${id === currentConvId ? 'active' : ''}" onclick="switchConversation('${id}')">
+  list.innerHTML = sorted.map(([id, c]) =>
+    `<div class="history-item ${id === currentConvId ? 'active' : ''}" onclick="switchConversation('${id}')">
       <div class="history-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-      <div class="history-item-text">
-        <div class="history-item-title">${escapeHtml(c.title)}</div>
-        <div class="history-item-time">${formatTime(c.updatedAt)}</div>
-      </div>
+      <div class="history-item-text"><div class="history-item-title">${escapeHtml(c.title)}</div><div class="history-item-time">${formatTime(c.updatedAt)}</div></div>
       <button class="history-item-del" onclick="event.stopPropagation();deleteConversation('${id}')" title="删除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>
-    </div>
-  `).join('');
+    </div>`
+  ).join('');
 }
 
 function newConversation() {
@@ -309,8 +231,7 @@ function newConversation() {
   document.getElementById('messagesContainer').innerHTML = '';
   document.getElementById('topbarTitle').textContent = '新对话';
   localStorage.removeItem('zhizhen_last_conv');
-  renderHistory();
-  clearPendingImages();
+  renderHistory(); clearPendingImages();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -320,13 +241,11 @@ function switchConversation(id) {
   localStorage.setItem('zhizhen_last_conv', id);
   document.getElementById('welcomePage').style.display = 'none';
   const mc = document.getElementById('messagesContainer');
-  mc.style.display = 'block';
-  mc.innerHTML = '';
+  mc.style.display = 'block'; mc.innerHTML = '';
   const conv = conversations[id];
   document.getElementById('topbarTitle').textContent = conv.title;
   conv.messages.forEach(m => appendMessageToDOM(m.role, m.content, m.images, m.timestamp, false));
-  renderHistory();
-  scrollToBottom();
+  renderHistory(); scrollToBottom();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -334,8 +253,7 @@ function deleteConversation(id) {
   if (!confirm('确定删除该对话？')) return;
   delete conversations[id];
   localStorage.setItem('zhizhen_conversations', JSON.stringify(conversations));
-  if (currentConvId === id) newConversation();
-  else renderHistory();
+  if (currentConvId === id) newConversation(); else renderHistory();
 }
 
 function saveConversation() {
@@ -356,14 +274,17 @@ function appendMessageToDOM(role, content, images, timestamp, animate = true) {
   row.className = `message-row ${role === 'user' ? 'user' : ''}`;
   if (!animate) row.style.animation = 'none';
   const avatarHtml = role === 'user'
-    ? `<div class="msg-avatar user"><span>我</span></div>`
-    : `<div class="msg-avatar ai"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg></div>`;
+    ? '<div class="msg-avatar user"><span>我</span></div>'
+    : '<div class="msg-avatar ai"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg></div>';
   let imgHtml = '';
-  if (images && images.length > 0) {
-    imgHtml = images.map(url => `<img src="${url}" onclick="showImageModal(this.src)" alt="上传图片">`).join('');
+  if (images && images.length > 0) imgHtml = images.map(url => `<img src="${url}" onclick="showImageModal(this.src)" alt="上传图片">`).join('');
+  let bubbleContent = '';
+  if (role === 'assistant') {
+    bubbleContent = renderMarkdown(content);
+  } else {
+    bubbleContent = '<div style="white-space:pre-wrap">' + escapeHtml(content) + '</div>';
   }
-  const bubbleContent = role === 'assistant' ? renderMarkdown(content) : '';
-  row.innerHTML = `${avatarHtml}<div class="msg-content"><div class="msg-bubble">${imgHtml}${role === 'user' ? `<div style="white-space:pre-wrap">${escapeHtml(content)}</div>` : ''}<div class="md-content" style="${role === 'user' ? 'display:none' : ''}">${bubbleContent}</div></div><div class="msg-time">${formatTime(timestamp)}</div></div>`;
+  row.innerHTML = `${avatarHtml}<div class="msg-content"><div class="msg-bubble">${imgHtml}${bubbleContent}</div><div class="msg-time">${formatTime(timestamp)}</div></div>`;
   mc.appendChild(row);
   return row;
 }
@@ -371,22 +292,21 @@ function appendMessageToDOM(role, content, images, timestamp, animate = true) {
 function createStreamingMessage() {
   const mc = document.getElementById('messagesContainer');
   const row = document.createElement('div');
-  row.className = 'message-row';
-  row.id = 'streamingRow';
-  row.innerHTML = `<div class="msg-avatar ai"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg></div><div class="msg-content"><div class="msg-bubble"><div class="md-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div><div class="msg-time">${formatTime(Date.now())}</div></div>`;
+  row.className = 'message-row'; row.id = 'streamingRow';
+  row.innerHTML = '<div class="msg-avatar ai"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2v8m0 0v8m0-8h8m-8 0H4"/></svg></div><div class="msg-content"><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div><div class="msg-time">' + formatTime(Date.now()) + '</div></div>';
   mc.appendChild(row);
   return row;
 }
 
 function updateStreamingMessage(row, text) {
-  const md = row.querySelector('.md-content');
-  if (md) { md.innerHTML = renderMarkdown(text); }
+  const md = row.querySelector('.msg-bubble');
+  if (md) md.innerHTML = renderMarkdown(text);
   scrollToBottom();
 }
 
 function finishStreamingMessage(row, text) {
-  const md = row.querySelector('.md-content');
-  if (md) { md.innerHTML = renderMarkdown(text); }
+  const md = row.querySelector('.msg-bubble');
+  if (md) md.innerHTML = renderMarkdown(text);
   row.removeAttribute('id');
 }
 
@@ -397,9 +317,8 @@ async function sendMessage() {
   if (isStreaming) return;
   document.getElementById('welcomePage').style.display = 'none';
   document.getElementById('messagesContainer').style.display = 'block';
-  if (!currentConvId) { saveConversation(); }
-  let uploadedFileIds = [];
-  let imagePreviews = [];
+  if (!currentConvId) saveConversation();
+  let uploadedFileIds = [], imagePreviews = [];
   if (pendingImages.length > 0) {
     showUploadOverlay(true);
     for (const img of pendingImages) {
@@ -419,12 +338,8 @@ async function sendMessage() {
     document.getElementById('topbarTitle').textContent = conversations[currentConvId].title;
   }
   saveConversation();
-  input.value = '';
-  autoResize(input);
-  clearPendingImages();
-  updateSendBtn();
-  isStreaming = true;
-  setSendBtnLoading(true);
+  input.value = ''; autoResize(input); clearPendingImages(); updateSendBtn();
+  isStreaming = true; setSendBtnLoading(true);
   document.getElementById('stopBtn').classList.add('show');
   abortController = new AbortController();
   const streamRow = createStreamingMessage();
@@ -443,17 +358,18 @@ async function sendMessage() {
       response_mode: 'streaming',
       conversation_id: conversations[currentConvId].difyConvId || ''
     };
-    const response = await fetch(`${API_BASE}/v1/chat-messages`, {
+    console.log('Sending request:', body);
+    const response = await fetch(API_BASE + '/v1/chat-messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API_KEY },
       body: JSON.stringify(body),
       signal: abortController.signal
     });
-    if (!response.ok) { const errText = await response.text(); throw new Error(`API Error ${response.status}: ${errText}`); }
+    console.log('Response status:', response.status);
+    if (!response.ok) { const errText = await response.text(); throw new Error('API Error ' + response.status + ': ' + errText); }
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
-    let fullAnswer = '';
-    let buffer = '';
+    let fullAnswer = '', buffer = '';
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -461,24 +377,30 @@ async function sendMessage() {
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const dataStr = line.slice(6).trim();
-          if (!dataStr || dataStr === '[DONE]') continue;
-          try {
-            const data = JSON.parse(dataStr);
-            if (data.answer) { fullAnswer += data.answer; updateStreamingMessage(streamRow, fullAnswer); }
-            if (data.conversation_id && data.conversation_id !== conversations[currentConvId].difyConvId) { conversations[currentConvId].difyConvId = data.conversation_id; saveConversation(); }
-            if (data.event === 'error') { throw new Error(data.message || 'Unknown error'); }
-          } catch (e) { if (e.message.includes('API Error') || e.name === 'AbortError') throw e; console.warn('Parse error:', e); }
-        }
+        if (!line.startsWith('data: ')) continue;
+        const dataStr = line.slice(6).trim();
+        if (!dataStr || dataStr === '[DONE]') continue;
+        try {
+          const data = JSON.parse(dataStr);
+          console.log('SSE event:', data.event, 'answer:', data.answer ? data.answer.substring(0, 50) : '', 'text:', data.text ? data.text.substring(0, 50) : '');
+          if (data.event === 'message' || data.event === 'agent_message') {
+            const chunk = data.answer || data.text || '';
+            if (chunk) { fullAnswer += chunk; updateStreamingMessage(streamRow, fullAnswer); }
+          }
+          if (data.event === 'message_end') { console.log('Stream finished'); }
+          if (data.conversation_id && data.conversation_id !== conversations[currentConvId].difyConvId) {
+            conversations[currentConvId].difyConvId = data.conversation_id; saveConversation();
+          }
+          if (data.event === 'error') throw new Error(data.message || 'Unknown error');
+        } catch (e) { if (e.message.includes('API Error') || e.name === 'AbortError') throw e; console.warn('Parse error:', e); }
       }
     }
-    finishStreamingMessage(streamRow, fullAnswer);
+    finishStreamingMessage(streamRow, fullAnswer || '未收到回复，请重试');
     conversations[currentConvId].messages.push({ role: 'assistant', content: fullAnswer, timestamp: Date.now() });
     saveConversation();
   } catch (e) {
     if (e.name === 'AbortError') {
-      const md = streamRow.querySelector('.md-content');
+      const md = streamRow.querySelector('.msg-bubble');
       const currentText = md?.textContent || '';
       if (md) md.innerHTML = renderMarkdown(currentText + '\n\n*[已停止生成]*');
       streamRow.removeAttribute('id');
@@ -486,8 +408,8 @@ async function sendMessage() {
       saveConversation();
     } else {
       console.error(e);
-      const md = streamRow.querySelector('.md-content');
-      if (md) md.innerHTML = `<span style="color:#EF4444">请求出错：${escapeHtml(e.message)}</span>`;
+      const md = streamRow.querySelector('.msg-bubble');
+      if (md) md.innerHTML = '<span style="color:#EF4444">请求出错：' + escapeHtml(e.message) + '</span>';
       streamRow.removeAttribute('id');
     }
   } finally { isStreaming = false; setSendBtnLoading(false); document.getElementById('stopBtn').classList.remove('show'); abortController = null; }
@@ -499,8 +421,8 @@ async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('user', USER_ID);
-  const res = await fetch(`${API_BASE}/v1/files/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${API_KEY}` }, body: formData });
-  if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+  const res = await fetch(API_BASE + '/v1/files/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + API_KEY }, body: formData });
+  if (!res.ok) throw new Error('Upload failed: ' + res.status);
   const data = await res.json();
   return data.id;
 }
@@ -517,7 +439,7 @@ function handleFileSelect(event) {
 
 function renderImagePreviews() {
   const bar = document.getElementById('imagePreviewBar');
-  bar.innerHTML = pendingImages.map((img, i) => `<div class="preview-item"><img src="${img.preview}" alt="preview"><button class="preview-item-del" onclick="removePendingImage(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join('');
+  bar.innerHTML = pendingImages.map((img, i) => '<div class="preview-item"><img src="' + img.preview + '" alt="preview"><button class="preview-item-del" onclick="removePendingImage(' + i + ')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>').join('');
 }
 
 function removePendingImage(index) { pendingImages.splice(index, 1); renderImagePreviews(); updateSendBtn(); }
@@ -526,15 +448,30 @@ function showUploadOverlay(show) { document.getElementById('uploadOverlay').clas
 function handleKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
 function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 function updateSendBtn() { const btn = document.getElementById('sendBtn'); const input = document.getElementById('userInput'); btn.classList.toggle('active', input.value.trim() || pendingImages.length > 0); }
-function setSendBtnLoading(loading) { const btn = document.getElementById('sendBtn'); btn.classList.toggle('loading', loading); if (loading) { btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M7.76 7.76L4.93 4.93"/></svg>`; } else { btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`; } }
+function setSendBtnLoading(loading) {
+  const btn = document.getElementById('sendBtn');
+  btn.classList.toggle('loading', loading);
+  if (loading) btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M7.76 7.76L4.93 4.93"/></svg>';
+  else btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+}
 function scrollToBottom() { const area = document.getElementById('chatArea'); requestAnimationFrame(() => { area.scrollTop = area.scrollHeight; }); }
-function toggleSpeed() { speedMode = !speedMode; document.getElementById('speedToggle').classList.toggle('active', speedMode); }
 function useTag(text) { document.getElementById('userInput').value = text; autoResize(document.getElementById('userInput')); updateSendBtn(); document.getElementById('userInput').focus(); }
 function showImageModal(src) { document.getElementById('imgModal').classList.add('show'); document.getElementById('imgModalImg').src = src; }
-function renderMarkdown(text) { if (!text) return ''; try { return marked.parse(text); } catch (e) { return escapeHtml(text).replace(/\n/g, '<br>'); } }
+function renderMarkdown(text) {
+  if (!text) return '';
+  if (typeof marked !== 'undefined') { try { return marked.parse(text); } catch (e) {} }
+  return escapeHtml(text).replace(/\n/g, '<br>');
+}
 function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-function formatTime(ts) { if (!ts) return ''; const d = new Date(ts); const now = new Date(); if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); const y = new Date(now); y.setDate(y.getDate() - 1); if (d.toDateString() === y.toDateString()) return '昨天 ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
-document.addEventListener('click', (e) => { if (window.innerWidth > 768) return; const sb = document.getElementById('sidebar'); if (sb.classList.contains('collapsed')) return; if (!sb.contains(e.target) && !e.target.closest('.toggle-btn')) { toggleSidebar(); } });
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts), now = new Date();
+  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  const y = new Date(now); y.setDate(y.getDate() - 1);
+  if (d.toDateString() === y.toDateString()) return '昨天 ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+document.addEventListener('click', (e) => { if (window.innerWidth > 768) return; const sb = document.getElementById('sidebar'); if (sb.classList.contains('collapsed')) return; if (!sb.contains(e.target) && !e.target.closest('.toggle-btn')) toggleSidebar(); });
 </script>
 </body>
 </html>
