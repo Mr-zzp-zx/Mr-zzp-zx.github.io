@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -975,13 +976,17 @@ if (!window._chartInstances) window._chartInstances = [];
 
 function extractAndRenderCharts(container, text) {
   if (!container || !text || typeof echarts === 'undefined') return;
-  const regex = /```zhizhen-data\s*\n([\s\S]*?)```/g;
+  // Match both ```zhizhen-data and ```json code blocks that contain chart data
+  const regex = /```(?:zhizhen-data|json)\s*\n([\s\S]*?)```/g;
   let match, chartBlocks = [];
   while ((match = regex.exec(text)) !== null) {
     try {
       const chartData = JSON.parse(match[1]);
-      chartBlocks.push({ fullMatch: match[0], data: chartData });
-    } catch (e) { console.warn('Chart data parse error:', e); }
+      // Verify it looks like chart data (has charts array or chart-related fields)
+      if (chartData.charts || chartData.type || chartData.data || chartData.summary_cards) {
+        chartBlocks.push({ fullMatch: match[0], data: chartData });
+      }
+    } catch (e) { /* not valid JSON or not chart data */ }
   }
   if (chartBlocks.length === 0) return;
 
@@ -991,12 +996,19 @@ function extractAndRenderCharts(container, text) {
   section.innerHTML = '<div class="chart-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> 数据可视化</div>';
 
   chartBlocks.forEach(block => {
-    // Remove the raw code block from markdown HTML
+    // Remove ALL raw code blocks (json and zhizhen-data) from rendered HTML
     const codeEls = container.querySelectorAll('pre');
     codeEls.forEach(pre => {
-      if (pre.textContent && pre.textContent.includes('zhizhen-data')) {
-        pre.remove();
-      }
+      const codeText = pre.textContent || '';
+      // Remove code blocks that contain chart-like data
+      try {
+        // Strip the markdown code fence markers
+        const jsonStr = codeText.replace(/^```(?:zhizhen-data|json)\s*\n?/i, '').replace(/\n?```$/i, '');
+        const parsed = JSON.parse(jsonStr);
+        if (parsed.charts || parsed.type || parsed.data || parsed.summary_cards) {
+          pre.remove();
+        }
+      } catch(e) {}
     });
     section.appendChild(createChartCard(block.data));
   });
@@ -1048,8 +1060,36 @@ function createChartCard(data) {
 }
 
 function buildBarOption(data) {
-  const items = data.data || [];
-  const hasRef = items.some(i => i.reference !== undefined || i.refMax !== undefined);
+  // Support two formats:
+  // Format A (from LLM): { data: [{name, value, reference:"4-10", status:"high", refMin, refMax}] }
+  // Format B (original): { data: { categories: [...], series: [...] } }
+  let items = [];
+  if (Array.isArray(data.data)) {
+    items = data.data;
+  } else if (data.data && data.data.categories) {
+    // Convert format B to flat items
+    const cats = data.data.categories;
+    const series = data.data.series || [];
+    cats.forEach((name, i) => {
+      const val = series[0] ? series[0].data[i] : 0;
+      const ref = series[1] ? series[1].data[i] : undefined;
+      items.push({ name, value: val, reference: ref, status: undefined });
+    });
+  }
+
+  // Parse reference range
+  items.forEach(i => {
+    if (i.refMin === undefined && i.refMax === undefined && i.reference) {
+      const parts = String(i.reference).split(/[-~至到]/).map(s => parseFloat(s.trim()));
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        i.refMin = parts[0]; i.refMax = parts[1];
+      } else if (parts.length === 1 && !isNaN(parts[0])) {
+        i.refMax = parts[0];
+      }
+    }
+  });
+
+  const hasRef = items.some(i => i.refMax !== undefined || i.reference !== undefined);
   return {
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: function(p) {
       let s = '<b>' + p[0].name + '</b><br>';
@@ -1063,10 +1103,14 @@ function buildBarOption(data) {
     series: [
       { name: '检测值', type: 'bar', barMaxWidth: 40, data: items.map(i => ({ value: i.value, itemStyle: { color: i.status === 'high' ? '#EF4444' : i.status === 'low' ? '#F59E0B' : '#10B981', borderRadius: [4,4,0,0] } })) }
     ].concat(hasRef ? [{
-      name: '参考范围', type: 'bar', barMaxWidth: 40, barGap: '-100%', z: 0,
+      name: '参考上限', type: 'bar', barMaxWidth: 40, barGap: '-100%', z: 0,
       data: items.map(i => {
         if (i.refMax !== undefined && i.refMin !== undefined) return { value: i.refMax, itemStyle: { color: 'rgba(37,99,235,0.08)', borderRadius: [4,4,0,0], borderColor: '#2563EB', borderWidth: 1, borderType: 'dashed' } };
-        if (i.reference !== undefined) return { value: i.reference, itemStyle: { color: 'rgba(37,99,235,0.08)', borderRadius: [4,4,0,0], borderColor: '#2563EB', borderWidth: 1, borderType: 'dashed' } };
+        if (i.refMax !== undefined) return { value: i.refMax, itemStyle: { color: 'rgba(37,99,235,0.08)', borderRadius: [4,4,0,0], borderColor: '#2563EB', borderWidth: 1, borderType: 'dashed' } };
+        if (i.reference !== undefined) {
+          const parts = String(i.reference).split(/[-~至到]/).map(s => parseFloat(s.trim()));
+          if (parts.length >= 1 && !isNaN(parts[parts.length-1])) return { value: parts[parts.length-1], itemStyle: { color: 'rgba(37,99,235,0.08)', borderRadius: [4,4,0,0], borderColor: '#2563EB', borderWidth: 1, borderType: 'dashed' } };
+        }
         return { value: 0, itemStyle: { opacity: 0 } };
       }),
       tooltip: { formatter: function(p) {
