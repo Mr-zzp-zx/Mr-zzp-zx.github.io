@@ -1019,7 +1019,7 @@ function extractAndRenderCharts(container, text) {
   setTimeout(() => {
     section.querySelectorAll('.chart-container[data-chart]').forEach(el => {
       try {
-        const data = JSON.parse(el.getAttribute('data-chart'));
+        const data = JSON.parse(decodeURIComponent(el.getAttribute('data-chart')));
         console.log('[Chart] Initializing chart:', data.type, data.title);
         const chart = echarts.init(el, null, { renderer: 'canvas' });
         const type = data.type || 'bar';
@@ -1056,7 +1056,7 @@ function createChartCard(data) {
   card.innerHTML =
     '<div class="chart-card-header"><div class="chart-card-title">' + title + '</div><div class="chart-card-badge">' + typeLabel + '</div></div>' +
     summaryHtml +
-    '<div class="chart-container" data-chart="' + escapeHtml(JSON.stringify(data)) + '"></div>' +
+    '<div class="chart-container" data-chart="' + encodeURIComponent(JSON.stringify(data)) + '"></div>' +
     (data.footer ? '<div class="chart-card-footer">' + data.footer + '</div>' : '');
   return card;
 }
