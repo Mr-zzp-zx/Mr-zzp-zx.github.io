@@ -1015,11 +1015,12 @@ function extractAndRenderCharts(container, text) {
 
   container.appendChild(section);
 
-  // Initialize ECharts after DOM insertion
-  requestAnimationFrame(() => {
+  // Initialize ECharts after DOM insertion with delay for layout
+  setTimeout(() => {
     section.querySelectorAll('.chart-container[data-chart]').forEach(el => {
       try {
         const data = JSON.parse(el.getAttribute('data-chart'));
+        console.log('[Chart] Initializing chart:', data.type, data.title);
         const chart = echarts.init(el, null, { renderer: 'canvas' });
         const type = data.type || 'bar';
         let option;
@@ -1029,10 +1030,11 @@ function extractAndRenderCharts(container, text) {
         else if (type === 'gauge') option = buildGaugeOption(data);
         else if (type === 'table') { renderDataTable(el, data); return; }
         else option = buildBarOption(data);
+        console.log('[Chart] Option built:', !!option);
         if (option) { chart.setOption(option); window._chartInstances.push(chart); }
-      } catch (e) { console.warn('Chart render error:', e); }
+      } catch (e) { console.error('[Chart] Render error:', e); }
     });
-  });
+  }, 200);
 }
 
 function createChartCard(data) {
