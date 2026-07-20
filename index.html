@@ -453,7 +453,7 @@ const API_BASE = 'https://6229286c.r22.cpolar.top';
 const API_KEY = 'app-7xLElyQF08bVR5oq2EzGARKZ';
 const USER_ID = localStorage.getItem('zhizhen_user_id') || (() => { const id = 'user-' + crypto.randomUUID(); localStorage.setItem('zhizhen_user_id', id); return id; })();
 
-// ========== STATE ==========
+// ========== STATE =========
 let conversations = JSON.parse(localStorage.getItem('zhizhen_conversations') || '{}');
 let currentConvId = null;
 let isStreaming = false;
