@@ -700,7 +700,7 @@ function finishStreamingMessage(row, text) {
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const text = input.value.trim();
-  if (!text && pendingImages.length === 0) return;
+  if (!text && pendingImages.length === 0 && pendingFiles.length === 0) return;
   if (isStreaming) return;
 
   // Hide welcome, show messages
@@ -957,7 +957,6 @@ async function handleFileSelect(event) {
       }
       showUploadOverlay(false);
       pendingFiles.push({ file, fileName: file.name, content });
-      pendingImages.push({ file, preview: null, fileName: file.name });
       renderImagePreviews();
       updateSendBtn();
     }
@@ -967,13 +966,18 @@ async function handleFileSelect(event) {
 
 function renderImagePreviews() {
   const bar = document.getElementById('imagePreviewBar');
-  bar.innerHTML = pendingImages.map((img, i) => {
-    if (img.fileName && !img.preview) {
+  // 合并显示：真实图片 + 文档文件
+  const allItems = [
+    ...pendingImages.map(img => ({ ...img, isImage: true })),
+    ...pendingFiles.map(f => ({ file: f.file, fileName: f.fileName, isImage: false }))
+  ];
+  bar.innerHTML = allItems.map((item, i) => {
+    if (!item.isImage) {
       // 文档文件：显示文件名图标
       return `
         <div class="preview-item" style="background:var(--primary-bg);display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span style="font-size:12px;color:var(--text);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(img.fileName)}</span>
+          <span style="font-size:12px;color:var(--text);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(item.fileName)}</span>
           <button class="preview-item-del" onclick="removePendingFile(${i})" style="margin-left:auto;cursor:pointer;background:none;border:none;padding:2px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -983,7 +987,7 @@ function renderImagePreviews() {
       // 图片：显示缩略图预览
       return `
         <div class="preview-item">
-          <img src="${img.preview}" alt="preview">
+          <img src="${item.preview}" alt="preview">
           <button class="preview-item-del" onclick="removePendingFile(${i})">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -994,13 +998,20 @@ function renderImagePreviews() {
 }
 
 function removePendingFile(index) {
-  const item = pendingImages[index];
-  if (item && item.fileName) {
-    // 同时从 pendingFiles 中移除
+  const allItems = [
+    ...pendingImages.map(img => ({ ...img, isImage: true })),
+    ...pendingFiles.map(f => ({ file: f.file, fileName: f.fileName, isImage: false }))
+  ];
+  const item = allItems[index];
+  if (!item.isImage) {
+    // 文档：从 pendingFiles 移除
     const fIdx = pendingFiles.findIndex(f => f.file === item.file);
     if (fIdx >= 0) pendingFiles.splice(fIdx, 1);
+  } else {
+    // 图片：从 pendingImages 移除
+    const iIdx = pendingImages.findIndex(img => img.file === item.file);
+    if (iIdx >= 0) pendingImages.splice(iIdx, 1);
   }
-  pendingImages.splice(index, 1);
   renderImagePreviews();
   updateSendBtn();
 }
@@ -1038,7 +1049,7 @@ function autoResize(el) {
 function updateSendBtn() {
   const btn = document.getElementById('sendBtn');
   const input = document.getElementById('userInput');
-  const hasContent = input.value.trim() || pendingImages.length > 0;
+  const hasContent = input.value.trim() || pendingImages.length > 0 || pendingFiles.length > 0;
   btn.classList.toggle('active', hasContent);
 }
 
